@@ -33,16 +33,21 @@ template <typename T>
 class Set
 {
     SetElement<T> * firstElement;
+    int length;
 public:
     Set()
     {
         firstElement = NULL;
+        length = 0;
     }
 
     void Add(T value)
     {
         if(firstElement == NULL)
+        {
             firstElement = new SetElement<T>(value);
+            length++;
+        }
         else
         {
             SetElement<T> * element = firstElement;
@@ -51,6 +56,7 @@ public:
                 if(element->NextElement() == NULL)
                 {
                     element->SetNextElement(new SetElement<T>(value));
+                    length++;
                     return;
                 }
                 element = element->NextElement();
@@ -61,6 +67,8 @@ public:
     void Delete(T value)
     {
         SetElement<T> * element = firstElement;
+        if(element == NULL)
+            return;
         if(element->Value() == value)
         {
             if(element->NextElement() == NULL)
@@ -68,6 +76,7 @@ public:
             else
                 firstElement = element->NextElement();
             delete element;
+            length--;
             return;
         }
         if(element->NextElement() == NULL)
@@ -79,6 +88,7 @@ public:
                 return;
         }
         delete element->SetNextElement(element->NextElement()->NextElement());
+        length--;
     }
 
     bool IsSet(T value)
@@ -93,5 +103,20 @@ public:
             element = element->NextElement();
         }
         return true;
+    }
+
+    void ForEach(void(*func)(T value))
+    {
+        SetElement<T> * element = firstElement;
+        while(element != NULL)
+        {
+            func(element->Value());
+            element = element->NextElement();
+        }
+    }
+
+    int Size()
+    {
+        return length;
     }
 };
