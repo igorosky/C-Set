@@ -1,3 +1,6 @@
+#include <cstddef>
+#include <cstdarg>
+
 template <typename T>
 class SetElement
 {
@@ -105,13 +108,16 @@ public:
         return true;
     }
 
-    void ForEach(void(*func)(T value))
+    void ForEach(void(*func)(T, va_list)...)
     {
         SetElement<T> * element = firstElement;
         while(element != NULL)
         {
-            func(element->Value());
+            va_list args;
+            va_start(args, func);
+            func(element->Value(), args);
             element = element->NextElement();
+            va_end(args);
         }
     }
 
